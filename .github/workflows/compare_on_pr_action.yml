@@ -14,8 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get Neptune Experiments
-        run: pip install neptune-client
-        run: python get_neptune_experiments.py
+        run: |
+          pip install neptune-client
+          python get_neptune_experiments.py
 
       - name: Create a comment
         uses: peter-evans/commit-comment@v1
