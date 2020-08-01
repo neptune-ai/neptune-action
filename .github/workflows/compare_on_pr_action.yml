@@ -1,4 +1,4 @@
-name: Get Neptune experiments
+name: Compare Neptune experiments
 
 on:
   pull_request:
