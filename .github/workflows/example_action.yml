@@ -1,0 +1,13 @@
+name: Get Neptune experiments
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  compare-experiments:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: pip install neptune-client
+      - run: python get_neptune_experiments.py
