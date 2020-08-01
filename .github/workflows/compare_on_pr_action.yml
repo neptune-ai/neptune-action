@@ -1,4 +1,4 @@
-name: Compare Neptune experiments
+name: Neptune actions
 
 on:
   push:
@@ -14,14 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get Neptune Experiments
+        id: compare
         run: |
           pip install neptune-client
           python get_neptune_experiments.py
+          result=$(cat comparison.md)
+          echo ::set-output name=result::$result
 
       - name: Create a comment
         uses: peter-evans/commit-comment@v1
         with:
           body: |
-            This is a multi-line test comment
-            - With GitHub **Markdown**
-            - Created by [commit-comment][1]
+            ${{ steps.compare.outputs.result }}
