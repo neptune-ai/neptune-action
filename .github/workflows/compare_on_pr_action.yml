@@ -9,6 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - run: pip install neptune-client
-      - run: python get_neptune_experiments.py
+      - name: Get Neptune Experiments
+        uses: actions/checkout@v2
+        run: pip install neptune-client
+        run: python get_neptune_experiments.py
+
+      - name: Create a comment
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown**
+            - Created by [commit-comment][1]
