@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: peter-evans/commit-comment@v1
       - name: Get Neptune Experiments
         run: pip install neptune-client
         run: python get_neptune_experiments.py
 
       - name: Create a comment
+        uses: peter-evans/commit-comment@v1
         with:
           body: |
             This is a multi-line test comment
