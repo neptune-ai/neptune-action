@@ -9,5 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - run: pip install neptune-client
       - run: python get_neptune_experiments.py
