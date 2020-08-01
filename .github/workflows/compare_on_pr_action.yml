@@ -1,6 +1,9 @@
 name: Compare Neptune experiments
 
 on:
+  push:
+    branches: [master]
+
   pull_request:
     branches: [master]
 
@@ -9,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+      - uses: peter-evans/commit-comment@v1
       - name: Get Neptune Experiments
-        uses: actions/checkout@v2
         run: pip install neptune-client
         run: python get_neptune_experiments.py
 
       - name: Create a comment
-        uses: peter-evans/commit-comment@v1
         with:
           body: |
             This is a multi-line test comment
