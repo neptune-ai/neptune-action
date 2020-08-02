@@ -19,7 +19,7 @@ jobs:
         env:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
           NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
-        id: Create comparison
+        id: compare
         run: |
           pip install neptune-client
           python get_neptune_experiments.py
