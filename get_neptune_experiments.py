@@ -1,9 +1,9 @@
-import sys
+import os
 
 import neptune
 
-PROJECT_NAME = sys.getenv('NEPTUNE_PROJECT_NAME')
-API_TOKEN = sys.getenv('NEPTUNE_API_TOKEN')
+PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
+API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
 BRANCHES = ['master', 'develop']
 EXPERIMENT_IDS = ['GIT-3', 'GIT-6']
