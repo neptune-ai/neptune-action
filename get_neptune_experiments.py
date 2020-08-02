@@ -64,7 +64,7 @@ def create_table(data):
     table.append("<tr><td>Neptune Experiment</td>")
     user, project = PROJECT_NAME.split('/')
     for exp_id in data['id']:
-        text = f"""<td><a href="https://ui.neptune.ai/o/{user}/org/{project}/e/{exp_id}"><b>{exp_id}</b></a></td>"""
+        text = """<td><a href="https://ui.neptune.ai/o/{0}/org/{1}/e/{2}"><b>{2}</b></a></td>""".format(user, project, exp_id)
         table.append(text)
     table.append("</tr>")
 
@@ -76,9 +76,9 @@ def create_table(data):
             </th>""")
 
         for name, values in data['metrics'].items():
-            table.append(f"<tr><td>{name}</td>")
+            table.append("<tr><td>{}</td>".format(name))
             for value in values:
-                table.append(f"<td>{value}</td>")
+                table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
         table.append("</tr>")
@@ -91,9 +91,9 @@ def create_table(data):
             </th>""")
 
         for name, values in data['parameters'].items():
-            table.append(f"<tr><td>{name}</td>")
+            table.append("<tr><td>{}</td>".format(name))
             for value in values:
-                table.append(f"<td>{value}</td>")
+                table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
         table.append("</tr>")
@@ -107,9 +107,9 @@ def create_table(data):
             </th>""")
 
         for name, values in data['properties'].items():
-            table.append(f"<tr><td>{name}</td>")
+            table.append("<tr><td>{}</td>".format(name))
             for value in values:
-                table.append(f"<td>{value}</td>")
+                table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
         table.append("</tr>")
