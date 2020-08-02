@@ -18,7 +18,7 @@ jobs:
         run: |
           pip install neptune-client
           python get_neptune_experiments.py
-          result=$(cat comparison.md)
+          result=$(cat comparison_table.md)
           echo ::set-output name=result::$result
 
       - name: Create a comment
