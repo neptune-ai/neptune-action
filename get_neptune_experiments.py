@@ -5,8 +5,8 @@ import neptune
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
-BRANCHES = ['master', os.getenv('PR_BRANCH_NAME')]
-EXPERIMENT_IDS = [os.getenv('MASTER_EXPERIMENT_ID'), os.getenv('PR_BRANCH_EXPERIMENT_ID')]
+BRANCHES = ['master', 'develop']
+EXPERIMENT_IDS = ['GIT-3', 'GIT-6']
 
 
 def get_experiment_data():
@@ -56,7 +56,9 @@ def format_data(df):
 
 
 def create_table(data):
-    table = []
+    link = "https://ui.neptune.ai/o/shared/org/github-actions/compare?shortId=%5B%22{}%22%2C%22{}%22%5D".format(
+        data['id'][0], data['id'][1])
+    table = ["""<a href="{}">See the experiment comparison in Neptune </a>""".format(link)]
     table.append("<table><tr><td></td>")
 
     # branches
