@@ -22,7 +22,7 @@ PARAMS = {'boosting_type': 'gbdt',
 NUM_BOOSTING_ROUNDS = 10
 
 neptune.init(api_token=API_TOKEN, project_qualified_name=PROJECT_NAME)
-neptune.create_experiment('lightGBM-on-wine')
+neptune.create_experiment('lightGBM-on-wine', params=PARAMS)
 
 data = load_wine()
 X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.25)

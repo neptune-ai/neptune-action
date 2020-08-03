@@ -1,6 +1,7 @@
 import os
 
 import neptune
+import numpy as np
 
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
@@ -85,6 +86,7 @@ def create_table(data):
         for name, values in data['metrics'].items():
             table.append("<tr><td>{}</td>".format(name))
             for value in values:
+                value = np.round(float(value), 5)
                 table.append("<td>{}</td>".format(value))
             table.append("</tr>")
 
