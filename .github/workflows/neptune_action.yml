@@ -41,7 +41,7 @@ jobs:
         env:
           NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
           NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
-          PR_BRANCH_NAME: ${{ steps.pr_branch_name.outputs.$branch_name }}
+          PR_BRANCH_NAME: ${{ steps.pr_branch_name.outputs.branch_name }}
           MASTER_EXPERIMENT_ID: ${{ steps.experiment_master.outputs.experiment_id }}
           PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr_branch.outputs.experiment_id }}
         id: compare
