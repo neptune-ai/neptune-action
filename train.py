@@ -12,7 +12,7 @@ neptune.create_experiment(params={'lr': 0.3, 'epoch_nr': 16})
 neptune.log_metric('accuracy', 0.14)
 neptune.log_metric('f1_score', 0.58)
 
-if os.getenv('CI_PIPELINE') == "true":
+if os.getenv('CI') == "true":
     neptune.append_tag('ci-pipeline')
     with open('experiment_id.txt', 'w+') as f:
         f.write(neptune.get_experiment().id)
