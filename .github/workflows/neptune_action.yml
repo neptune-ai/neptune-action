@@ -12,32 +12,24 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
 
-      - name: Run experiment master
+      - name: Run experiment from master
         id: experiment_master
         run: |
           pip install neptune-client
           python train.py
-#          experiment_id=$(printenv NEPTUNE_EXPERIMENT_ID)
-#          echo ::set-output name=experiment_id::$experiment_id
+          echo ::set-output name=experiment_id::$NEPTUNE_EXPERIMENT_ID
 
       - name: Checkout develop
         uses: actions/checkout@v2
         with:
           ref: dev
 
-      - name: Get PR branch name
-        id: pr_branch_name
-        run: |
-          branch_name=$(git rev-parse --abbrev-ref HEAD)
-          echo ::set-output name=branch_name::$branch_name
-
-      - name: Run experiment PR branch
-        id: experiment_pr_branch
+      - name: Run experiment from develop
+        id: experiment_develop
         run: |
           pip install neptune-client
           python train.py
-          experiment_id=$(printenv NEPTUNE_EXPERIMENT_ID)
-          echo ::set-output name=experiment_id::$experiment_id
+          echo ::set-output name=experiment_id::$NEPTUNE_EXPERIMENT_ID
 
       - name: Get Neptune Experiments
         env:
@@ -45,7 +37,7 @@ jobs:
           NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
           PR_BRANCH_NAME: ${{ steps.pr_branch_name.outputs.branch_name }}
           MASTER_EXPERIMENT_ID: ${{ steps.experiment_master.outputs.experiment_id }}
-          PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr_branch.outputs.experiment_id }}
+          PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_develop.outputs.experiment_id }}
         id: compare
         run: |
           pip install neptune-client
