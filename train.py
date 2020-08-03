@@ -11,7 +11,7 @@ API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
 PARAMS = {'n_estimators': 40,
           'max_depth': 20,
-          'max_features': 60,
+          'max_features': 5,
           }
 
 neptune.init(project_qualified_name=PROJECT_NAME, api_token=API_TOKEN)
