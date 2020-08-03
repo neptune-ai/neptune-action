@@ -5,8 +5,6 @@ import numpy as np
 
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
-
-BRANCHES = ['develop', 'master']
 EXPERIMENT_IDS = [os.getenv('MASTER_EXPERIMENT_ID'), os.getenv('DEVELOP_EXPERIMENT_ID')]
 
 
@@ -40,7 +38,7 @@ def format_data(df):
     cleaned_data = {'metrics': {},
                     'parameters': {},
                     'properties': {},
-                    'branches': BRANCHES
+                    'branches': ['develop', 'master']
                     }
     for k, v in data.items():
         if k == 'id':
