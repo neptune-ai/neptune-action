@@ -9,8 +9,8 @@ from sklearn.model_selection import train_test_split
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
-PARAMS = {'n_estimators': 10,
-          'max_depth': 30,
+PARAMS = {'n_estimators': 100,
+          'max_depth': 20,
           'max_features': 3,
           }
 
