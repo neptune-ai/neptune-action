@@ -7,10 +7,10 @@ API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
 neptune.init(project_qualified_name=PROJECT_NAME, api_token=API_TOKEN)
 
-neptune.create_experiment(params={'lr': 0.3, 'epoch_nr': 13})
+neptune.create_experiment(params={'lr': 0.3, 'epoch_nr': 72})
 
-neptune.log_metric('accuracy', 0.79)
-neptune.log_metric('f1_score', 0.52)
+neptune.log_metric('accuracy', 0.88)
+neptune.log_metric('f1_score', 0.58)
 
 if os.getenv('CI_PIPELINE') == "true":
     neptune.append_tag('ci-pipeline')
