@@ -17,8 +17,8 @@ jobs:
         run: |
           pip install neptune-client
           python train.py
-          experiment_id=$(printenv NEPTUNE_EXPERIMENT_ID)
-          echo ::set-output name=experiment_id::$experiment_id
+#          experiment_id=$(printenv NEPTUNE_EXPERIMENT_ID)
+#          echo ::set-output name=experiment_id::$experiment_id
 
       - name: Checkout PR
         uses: dawidd6/action-checkout-pr@v1
