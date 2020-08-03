@@ -15,11 +15,11 @@ API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 PARAMS = {'boosting_type': 'gbdt',
           'objective': 'multiclass',
           'num_class': 3,
-          'num_leaves': 8,
+          'num_leaves': 18,
           'learning_rate': 0.01,
           'feature_fraction': 0.9
           }
-NUM_BOOSTING_ROUNDS = 10
+NUM_BOOSTING_ROUNDS = 20
 
 neptune.init(api_token=API_TOKEN, project_qualified_name=PROJECT_NAME)
 neptune.create_experiment('lightGBM-on-wine', params=PARAMS)
