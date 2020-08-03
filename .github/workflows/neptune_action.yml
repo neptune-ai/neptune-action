@@ -42,6 +42,8 @@ jobs:
 
       - name: Checkout master
         uses: actions/checkout@v2
+        with:
+          ref: master
 
       - name: Setup master environment
         run: |
