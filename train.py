@@ -18,7 +18,7 @@ neptune.init(project_qualified_name=PROJECT_NAME, api_token=API_TOKEN)
 neptune.create_experiment('random-forest-on-wine', params=PARAMS)
 
 data = load_breast_cancer()
-X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.1)
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.25)
 
 rf = RandomForestClassifier(**PARAMS)
 rf.fit(X_train, y_train)
