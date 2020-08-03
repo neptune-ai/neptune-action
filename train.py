@@ -7,7 +7,7 @@
 # neptune.log_metric('accuracy', 0.81)
 # neptune.log_metric('f1_score', 0.66)
 
-weird_text="tra"
+weird_text="trasdasdasda"
 
 import os
 os.environ["NEPTUNE_EXPERIMENT_ID"] = "GIT-6" #neptune.get_experiment().id
