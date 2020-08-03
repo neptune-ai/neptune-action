@@ -78,7 +78,7 @@ def create_table(data):
     # metrics
     if data['metrics']:
         table.append("""<tr>
-            <th colspan=3, class="section-type", style="text-align:left;background-color:lightblue;">
+            <th colspan=3, style="text-align:left;">
                 Metrics
             </th>""")
 
@@ -93,7 +93,7 @@ def create_table(data):
     # parameters
     if data['parameters']:
         table.append("""<tr>
-            <th colspan=3, class="section-type", style="text-align:left;background-color:lightblue;">
+            <th colspan=3, style="text-align:left;">
                 Parameters
             </th>""")
 
@@ -109,7 +109,7 @@ def create_table(data):
 
     if data['properties']:
         table.append("""<tr>
-            <th colspan=3, class="section-type", style="text-align:left;background-color:lightblue;">
+            <th colspan=3, style="text-align:left;">
                 Properties
             </th>""")
 
