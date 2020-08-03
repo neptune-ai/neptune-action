@@ -18,6 +18,8 @@ jobs:
       - name: Setup environment
         env:
           CI_PIPELINE: true
+          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+          NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
         run: |
           pip install neptune-client
 
@@ -43,8 +45,6 @@ jobs:
 
       - name: Get Neptune Experiments
         env:
-          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-          NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
           MASTER_EXPERIMENT_ID: ${{ steps.experiment_master.outputs.experiment_id }}
           DEVELOP_EXPERIMENT_ID: ${{ steps.experiment_develop.outputs.experiment_id }}
         id: compare
