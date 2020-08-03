@@ -15,24 +15,40 @@ jobs:
       NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
 
     steps:
-      - name: Setup environment
-        run: |
-          pip install -r requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Checkout develop
         uses: actions/checkout@v2
         with:
           ref: develop
 
+      - name: Setup develop environment
+        run: |
+          pip install virtualenv
+          virtualenv develop_env
+          source develop_env/bin/activate
+          pip install -r requirements.txt
+
       - name: Run experiment from develop
         id: experiment_develop
         run: |
+          pip install -r requirements.txt
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
 
       - name: Checkout master
         uses: actions/checkout@v2
+
+      - name: Setup master environment
+        run: |
+          pip install virtualenv
+          virtualenv master_env
+          source master_env/bin/activate
+          pip install -r requirements.txt
 
       - name: Run experiment from master
         id: experiment_master
