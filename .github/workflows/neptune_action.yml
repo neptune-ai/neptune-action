@@ -7,6 +7,9 @@ on:
 jobs:
   compare-experiments:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5]
 
     steps:
       - name: Checkout master
