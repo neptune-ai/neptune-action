@@ -23,7 +23,8 @@ jobs:
         id: experiment_master
         run: |
           python train.py
-          echo ::set-output name=experiment_id::$NEPTUNE_EXPERIMENT_ID
+          experiment_id=$(cat experiment_id.txt)
+          echo ::set-output name=experiment_id::$experiment_id
 
       - name: Checkout develop
         uses: actions/checkout@v2
@@ -34,7 +35,8 @@ jobs:
         id: experiment_develop
         run: |
           python train.py
-          echo ::set-output name=experiment_id::$NEPTUNE_EXPERIMENT_ID
+          experiment_id=$(cat experiment_id.txt)
+          echo ::set-output name=experiment_id::$experiment_id
 
       - name: Get Neptune Experiments
         env:
