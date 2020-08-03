@@ -19,7 +19,7 @@ PARAMS = {'boosting_type': 'gbdt',
           'learning_rate': 0.01,
           'feature_fraction': 0.9
           }
-NUM_BOOSTING_ROUNDS = 10
+NUM_BOOSTING_ROUNDS = 20
 
 neptune.init(api_token=API_TOKEN, project_qualified_name=PROJECT_NAME)
 neptune.create_experiment('lightGBM-on-wine', params=PARAMS)
