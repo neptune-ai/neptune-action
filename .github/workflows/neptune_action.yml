@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5]
+        python-version: [3.7]
     env:
       NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
       NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
