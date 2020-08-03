@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Move code to runner
+      - name: Checkout master
         uses: actions/checkout@v2
 
       - name: Run experiment master
@@ -20,8 +20,10 @@ jobs:
 #          experiment_id=$(printenv NEPTUNE_EXPERIMENT_ID)
 #          echo ::set-output name=experiment_id::$experiment_id
 
-      - name: Checkout PR
-        uses: dawidd6/action-checkout-pr@v1
+      - name: Checkout develop
+        uses: actions/checkout@v2
+        with:
+          ref: dev
 
       - name: Get PR branch name
         id: pr_branch_name
