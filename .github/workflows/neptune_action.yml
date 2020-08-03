@@ -25,7 +25,7 @@ jobs:
       - name: Checkout develop
         uses: actions/checkout@v2
         with:
-          ref: dev
+          ref: develop
 
       - name: Run experiment from develop
         id: experiment_develop
