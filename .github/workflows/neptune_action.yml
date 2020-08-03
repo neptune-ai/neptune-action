@@ -10,13 +10,12 @@ jobs:
     strategy:
       matrix:
         python-version: [3.5]
+    env:
+      NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
+      NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
 
     steps:
       - name: Setup environment
-        env:
-          CI_PIPELINE: true
-          NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
-          NEPTUNE_PROJECT_NAME: ${{ secrets.NEPTUNE_PROJECT_NAME }}
         run: |
           pip install neptune-client
 
