@@ -42,7 +42,7 @@ gbm = lgb.train(PARAMS,
 y_test_pred = gbm.predict(X_test)
 
 # calculate evaluation metrics
-f1 = f1_score(y_test, y_test_pred.argmax(axis=1), average='micro')
+f1 = f1_score(y_test, y_test_pred.argmax(axis=1), average='macro')
 accuracy = accuracy_score(y_test, y_test_pred.argmax(axis=1))
 
 neptune.log_metric('accuracy', accuracy)
