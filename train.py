@@ -1,34 +1,65 @@
 import os
 
+import lightgbm as lgb
+import matplotlib.pyplot as plt
 import neptune
-from sklearn.datasets import load_breast_cancer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score, f1_score
+from neptunecontrib.monitoring.lightgbm import neptune_monitor
+from scikitplot.metrics import plot_roc, plot_confusion_matrix, plot_precision_recall
+from sklearn.datasets import load_wine
+from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import train_test_split
 
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
-PARAMS = {'n_estimators': 150,
-          'max_depth': 30,
-          'max_features': 7,
+PARAMS = {'boosting_type': 'gbdt',
+          'objective': 'multiclass',
+          'num_class': 3,
+          'num_leaves': 15,
+          'learning_rate': 0.01,
+          'feature_fraction': 0.9
           }
+NUM_BOOSTING_ROUNDS = 20
 
-neptune.init(project_qualified_name=PROJECT_NAME, api_token=API_TOKEN)
-neptune.create_experiment('random-forest-on-wine', params=PARAMS)
+neptune.init(api_token=API_TOKEN, project_qualified_name=PROJECT_NAME)
+neptune.create_experiment('lightGBM-on-wine')
 
-data = load_breast_cancer()
+data = load_wine()
 X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.25)
+lgb_train = lgb.Dataset(X_train, y_train)
+lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
-rf = RandomForestClassifier(**PARAMS)
-rf.fit(X_train, y_train)
+# train model
+gbm = lgb.train(PARAMS,
+                lgb_train,
+                num_boost_round=NUM_BOOSTING_ROUNDS,
+                valid_sets=[lgb_train, lgb_eval],
+                valid_names=['train', 'valid'],
+                callbacks=[neptune_monitor()],
+                )
 
-y_test_pred = rf.predict_proba(X_test)
-roc_auc = roc_auc_score(y_test, y_test_pred[:, 1])
-f1_score = f1_score(y_test, y_test_pred[:, 1] > 0.5)
+# get predictions on test
+y_test_pred = gbm.predict(X_test)
 
-neptune.log_metric('roc_auc', roc_auc)
-neptune.log_metric('f1_score', f1_score)
+# calculate evaluation metrics
+f1 = f1_score(y_test, y_test_pred.argmax(axis=1), average='micro')
+accuracy = accuracy_score(y_test, y_test_pred.argmax(axis=1))
+
+neptune.log_metric('accuracy', accuracy)
+neptune.log_metric('f1_score', f1)
+
+# create performance charts
+fig, ax = plt.subplots(figsize=(12, 10))
+plot_roc(y_test, y_test_pred, ax=ax)
+neptune.log_image('performance charts', fig)
+
+fig, ax = plt.subplots(figsize=(12, 10))
+plot_confusion_matrix(y_test, y_test_pred.argmax(axis=1), ax=ax)
+neptune.log_image('performance charts', fig)
+
+fig, ax = plt.subplots(figsize=(12, 10))
+plot_precision_recall(y_test, y_test_pred, ax=ax)
+neptune.log_image('performance charts', fig)
 
 # CI
 if os.getenv('CI') == "true":
