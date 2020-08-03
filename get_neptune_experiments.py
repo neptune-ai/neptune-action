@@ -5,8 +5,9 @@ import neptune
 PROJECT_NAME = os.getenv('NEPTUNE_PROJECT_NAME')
 API_TOKEN = os.getenv('NEPTUNE_API_TOKEN')
 
-BRANCHES = ['master', 'develop']
-EXPERIMENT_IDS = ['GIT-3', 'GIT-6']
+BRANCHES = ['master', os.getenv('PR_BRANCH_NAME')]
+EXPERIMENT_IDS = [os.getenv('MASTER_EXPERIMENT_ID'), os.getenv('PR_BRANCH_EXPERIMENT_ID')]
+
 
 def get_experiment_data():
     project = neptune.init(project_qualified_name=PROJECT_NAME, api_token=API_TOKEN)
