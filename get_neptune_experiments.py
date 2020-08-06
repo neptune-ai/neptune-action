@@ -14,7 +14,7 @@ def get_experiment_data():
     return project.get_leaderboard(id=EXPERIMENT_IDS)
 
 
-def find_diff(df):
+def find_experiment_diff(df):
     selected_cols, cleaned_cols = [], []
     for col in df.columns:
         for name in ['channel_', 'parameter_', 'property_']:
@@ -32,29 +32,25 @@ def find_diff(df):
     return df[different_cols]
 
 
-def format_data(df):
-    data = df.to_dict()
-
-    cleaned_data = {'metrics': {},
-                    'parameters': {},
-                    'properties': {},
-                    'branches': ['develop', 'master']
-                    }
-    for k, v in data.items():
+def create_comment_markdown(df):
+    # format data
+    data = {'metrics': {},
+            'parameters': {},
+            'properties': {},
+            'branches': ['develop', 'master']
+            }
+    for k, v in df.to_dict().items():
         if k == 'id':
-            cleaned_data[k] = [v[0], v[1]]
+            data[k] = [v[0], v[1]]
 
         if 'channel_' in k:
-            cleaned_data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
+            data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
         if 'parameter_' in k:
-            cleaned_data['parameters'][k.replace('parameter_', '')] = [v[0], v[1]]
+            data['parameters'][k.replace('parameter_', '')] = [v[0], v[1]]
         if 'property_' in k:
-            cleaned_data['properties'][k.replace('property_', '')] = [v[0], v[1]]
+            data['properties'][k.replace('property_', '')] = [v[0], v[1]]
 
-    return cleaned_data
-
-
-def create_table(data):
+    # link to experiment comparison
     link = "https://ui.neptune.ai/o/shared/org/github-actions/compare?shortId=%5B%22{}%22%2C%22{}%22%5D".format(
         data['id'][0], data['id'][1])
     table = ["""<a href="{}">See the experiment comparison in Neptune </a>""".format(link)]
@@ -128,11 +124,36 @@ def create_table(data):
     return table_text
 
 
-if __name__ == "__main__":
-    df = get_experiment_data()
-    df_diff = find_diff(df)
-    data = format_data(df_diff)
-    table_text = create_table(data)
+def dataframe2dict(df):
+    data = df.to_dict()
 
-    with open("comparison_table.md", "w+") as f:
-        f.write(table_text)
+    cleaned_data = {'metrics': {},
+                    'parameters': {},
+                    'properties': {},
+                    'branches': ['develop', 'master']
+                    }
+    for k, v in data.items():
+        if k == 'id':
+            cleaned_data[k] = [v[0], v[1]]
+
+        if 'channel_' in k:
+            cleaned_data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
+        if 'parameter_' in k:
+            cleaned_data['parameters'][k.replace('parameter_', '')] = [v[0], v[1]]
+        if 'property_' in k:
+            cleaned_data['properties'][k.replace('property_', '')] = [v[0], v[1]]
+
+    return cleaned_data
+
+
+def main():
+    df = get_experiment_data()
+    df_diff = find_experiment_diff(df)
+    comment_body = create_comment_markdown(df_diff)
+
+    with open("comment_body.md", "w+") as f:
+        f.write(comment_body)
+
+
+if __name__ == "__main__":
+    main()
