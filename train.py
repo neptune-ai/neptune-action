@@ -1,6 +1,4 @@
 import os
-print(os.getenv('GITHUB_REF'))
-exit()
 
 import lightgbm as lgb
 import matplotlib.pyplot as plt
