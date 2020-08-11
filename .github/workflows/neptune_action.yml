@@ -41,6 +41,7 @@ jobs:
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
+          printenv
 
       - name: Checkout master
         uses: actions/checkout@v2
@@ -53,6 +54,7 @@ jobs:
           virtualenv master_env
           source master_env/bin/activate
           pip install -r requirements.txt
+          printenv
 
       - name: Run experiment from master
         id: experiment_master
@@ -67,7 +69,7 @@ jobs:
           DEVELOP_EXPERIMENT_ID: ${{ steps.experiment_develop.outputs.experiment_id }}
         id: compare
         run: |
-          python -m neptunecontrib.create_experiment_comparison_comment \
+          python -m create_github_actions_comment \
             --api_token $NEPTUNE_API_TOKEN \
             --project_name $NEPTUNE_PROJECT_NAME \
             --experiment_ids $MASTER_EXPERIMENT_ID $DEVELOP_EXPERIMENT_ID \

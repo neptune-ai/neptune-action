@@ -72,7 +72,6 @@ neptune.log_image('performance charts', fig_pr)
 
 # Handle CI pipeline details if inside of the Gitub Actions Workflow
 if os.getenv('CI') == "true":
-    print(os.environ)
     neptune.append_tag('ci-pipeline')
     with open('experiment_id.txt', 'w+') as f:
         f.write(neptune.get_experiment().id)
