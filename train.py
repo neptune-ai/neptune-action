@@ -21,7 +21,7 @@ PARAMS = {'boosting_type': 'gbdt',
           'num_class': 3,
           'num_leaves': 8,
           'learning_rate': 0.01,
-          'feature_fraction': 0.9
+          'feature_fraction': 0.95
           }
 NUM_BOOSTING_ROUNDS = 10
 
