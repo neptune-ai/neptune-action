@@ -1,8 +1,6 @@
 name: Neptune actions
 
 on:
-  push:
-    branches: [master]
   pull_request:
     branches: [master]
 
@@ -34,7 +32,6 @@ jobs:
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
-          echo ::set-output name=github_ref::$GITHUB_REF
 
       - name: Checkout main branch
         uses: actions/checkout@v2
@@ -48,7 +45,6 @@ jobs:
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
-          echo ::set-output name=github_ref::$GITHUB_REF
 
       - name: Get Neptune experiments
         env:
@@ -63,7 +59,6 @@ jobs:
             --api_token $NEPTUNE_API_TOKEN \
             --project_name $NEPTUNE_PROJECT_NAME \
             --experiment_ids $MAIN_BRANCH_EXPERIMENT_ID $PR_BRANCH_EXPERIMENT_ID \
-            --branch_names $MAIN_BRANCH_REF $PR_BRANCH_REF \
             --filepath comment_body.md
           result=$(cat comment_body.md)
           echo ::set-output name=result::$result

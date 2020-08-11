@@ -21,8 +21,6 @@ Get a diff between experimenst across metrics, parameters, and properties and sa
 Attributes:
     experiment_ids(list(str)): Experiment ids of experiments you would like to compare. It works only for 2 experiments.
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
-    branch_names(list(str)): Branch names of main and PR branches you would like to compare. It works only for 2 experiments.
-        You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter. You can pass it either as --neptune_api_token or -t.
     project_name(str): Full name of the project. E.g. "neptune-ai/neptune-examples",
@@ -35,7 +33,6 @@ Example:
 
         $ python -m neptunecontrib.create_experiment_comparison_comment \
             --experiment_ids GIT-83 GIT-82 \
-            --branch_names master develop \
             --api_token ANONYMOUS \
             --project_name shared/neptune-actions \
             --filepath comment_body.md
@@ -78,12 +75,12 @@ def find_experiment_diff(df):
     return df[different_cols]
 
 
-def create_comment_markdown(df, project_name, branch_names):
+def create_comment_markdown(df, project_name):
     # format data
     data = {'metrics': {},
             'parameters': {},
             'properties': {},
-            'branches': branch_names}
+            'branches': ['main_branch', 'pull_request_branch']}
 
     df = df.iloc[::-1].reset_index()
 
@@ -174,7 +171,7 @@ def create_comment_markdown(df, project_name, branch_names):
 def main(arguments):
     df = get_experiment_data(arguments)
     df_diff = find_experiment_diff(df)
-    comment_body = create_comment_markdown(df_diff, arguments.project_name, arguments.branch_names)
+    comment_body = create_comment_markdown(df_diff, arguments.project_name)
 
     with open(arguments.filepath, "w+") as f:
         f.write(comment_body)
@@ -183,7 +180,6 @@ def main(arguments):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--experiment_ids', nargs=2)
-    parser.add_argument('-b', '--branch_names', nargs=2)
     parser.add_argument('-t', '--api_token', default=None)
     parser.add_argument('-p', '--project_name', default=None)
     parser.add_argument('-f', '--filepath', default='comment.md')
