@@ -27,16 +27,13 @@ jobs:
         with:
           ref: develop
 
-      - name: Setup pull request branch environment
+      - name: Setup Pull Request branch environment and run experiment
+        id: experiment_pr
         run: |
           pip install virtualenv
           virtualenv pr_env
           source pr_env/bin/activate
           pip install -r requirements.txt
-
-      - name: Run experiment from pull request branch
-        id: experiment_pr
-        run: |
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
@@ -47,16 +44,13 @@ jobs:
         with:
           ref: master
 
-      - name: Setup main branch environment
-        run: |
-          pip install virtualenv
-          virtualenv master_env
-          source master_env/bin/activate
-          pip install -r requirements.txt
-
-      - name: Run experiment from main branch
+      - name: Setup Main branch environment and run experiment
         id: experiment_main
         run: |
+          pip install virtualenv
+          virtualenv main_env
+          source main_env/bin/activate
+          pip install -r requirements.txt
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id

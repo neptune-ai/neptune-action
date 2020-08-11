@@ -21,6 +21,8 @@ Get a diff between experimenst across metrics, parameters, and properties and sa
 Attributes:
     experiment_ids(list(str)): Experiment ids of experiments you would like to compare. It works only for 2 experiments.
         You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
+    branch_names(list(str)): Branch names of main and PR branches you would like to compare. It works only for 2 experiments.
+        You can pass it either as --experiment_ids or -e. For example, --experiment_ids GIT-83 GIT-82.
     api_token(str): Neptune api token. If you have NEPTUNE_API_TOKEN environment
         variable set to your API token you can skip this parameter. You can pass it either as --neptune_api_token or -t.
     project_name(str): Full name of the project. E.g. "neptune-ai/neptune-examples",
@@ -31,7 +33,7 @@ Attributes:
 Example:
     Create a file, comparison.md, with a comparison table of experiments GIT-83 and GIT-82::
 
-        $ python -m neptunecontrib.create_github_actions_comment \
+        $ python -m neptunecontrib.create_experiment_comparison_comment \
             --experiment_ids GIT-83 GIT-82 \
             --branch_names master develop \
             --api_token ANONYMOUS \
@@ -83,12 +85,12 @@ def create_comment_markdown(df, project_name, branch_names):
             'properties': {},
             'branches': branch_names}
 
-    df = df.iloc[::-1]
+    df = df.iloc[::-1].reset_index()
 
     for k, v in df.to_dict().items():
         if k == 'id':
             data[k] = [v[0], v[1]]
-
+            print(data[k])
         if 'channel_' in k:
             data['metrics'][k.replace('channel_', '')] = [v[0], v[1]]
         if 'parameter_' in k:
