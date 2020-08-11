@@ -19,7 +19,7 @@ neptune.init(api_token=API_TOKEN, project_qualified_name=PROJECT_NAME)
 PARAMS = {'boosting_type': 'gbdt',
           'objective': 'multiclass',
           'num_class': 3,
-          'num_leaves': 8,
+          'num_leaves': 81,
           'learning_rate': 0.01,
           'feature_fraction': 0.9
           }
