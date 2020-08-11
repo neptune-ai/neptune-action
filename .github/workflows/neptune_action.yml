@@ -22,57 +22,59 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Checkout develop
+      - name: Checkout pull request branch
         uses: actions/checkout@v2
         with:
           ref: develop
 
-      - name: Setup develop environment
+      - name: Setup pull request branch environment
         run: |
           pip install virtualenv
-          virtualenv develop_env
-          source develop_env/bin/activate
+          virtualenv pr_env
+          source pr_env/bin/activate
           pip install -r requirements.txt
 
-      - name: Run experiment from develop
-        id: experiment_develop
+      - name: Run experiment from pull request branch
+        id: experiment_pr
         run: |
-          pip install -r requirements.txt
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
-          printenv
+          echo ::set-output name=github_ref::$GITHUB_REF
 
-      - name: Checkout master
+      - name: Checkout main branch
         uses: actions/checkout@v2
         with:
           ref: master
 
-      - name: Setup master environment
+      - name: Setup main branch environment
         run: |
           pip install virtualenv
           virtualenv master_env
           source master_env/bin/activate
           pip install -r requirements.txt
-          printenv
 
-      - name: Run experiment from master
-        id: experiment_master
+      - name: Run experiment from main branch
+        id: experiment_main
         run: |
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
+          echo ::set-output name=github_ref::$GITHUB_REF
 
       - name: Get Neptune Experiments
         env:
-          MASTER_EXPERIMENT_ID: ${{ steps.experiment_master.outputs.experiment_id }}
-          DEVELOP_EXPERIMENT_ID: ${{ steps.experiment_develop.outputs.experiment_id }}
+          MAIN_BRANCH_REF: ${{ steps.experiment_main.outputs.github_ref }}
+          MAIN_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_main.outputs.experiment_id }}
+          PR_BRANCH_REF: ${{ steps.experiment_pr.outputs.github_ref }}
+          PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr.outputs.experiment_id }}
         id: compare
         run: |
           python -m create_github_actions_comment \
             --api_token $NEPTUNE_API_TOKEN \
             --project_name $NEPTUNE_PROJECT_NAME \
-            --experiment_ids $MASTER_EXPERIMENT_ID $DEVELOP_EXPERIMENT_ID \
+            --experiment_ids $MAIN_BRANCH_EXPERIMENT_ID $PR_BRANCH_EXPERIMENT_ID \
+            --branch_names $MAIN_BRANCH_REF $PR_BRANCH_REF \
             --filepath comment_body.md
           result=$(cat comment_body.md)
           echo ::set-output name=result::$result

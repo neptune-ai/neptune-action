@@ -33,6 +33,7 @@ Example:
 
         $ python -m neptunecontrib.create_github_actions_comment \
             --experiment_ids GIT-83 GIT-82 \
+            --branch_names master develop \
             --api_token ANONYMOUS \
             --project_name shared/neptune-actions \
             --filepath comment_body.md
@@ -75,12 +76,15 @@ def find_experiment_diff(df):
     return df[different_cols]
 
 
-def create_comment_markdown(df, project_name):
+def create_comment_markdown(df, project_name, branch_names):
     # format data
     data = {'metrics': {},
             'parameters': {},
             'properties': {},
-            'branches': ['develop', 'master']}
+            'branches': branch_names}
+
+    df = df.iloc[::-1]
+
     for k, v in df.to_dict().items():
         if k == 'id':
             data[k] = [v[0], v[1]]
@@ -168,7 +172,7 @@ def create_comment_markdown(df, project_name):
 def main(arguments):
     df = get_experiment_data(arguments)
     df_diff = find_experiment_diff(df)
-    comment_body = create_comment_markdown(df_diff, arguments.project_name)
+    comment_body = create_comment_markdown(df_diff, arguments.project_name, arguments.branch_names)
 
     with open(arguments.filepath, "w+") as f:
         f.write(comment_body)
@@ -177,6 +181,7 @@ def main(arguments):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--experiment_ids', nargs=2)
+    parser.add_argument('-b', '--branch_names', nargs=2)
     parser.add_argument('-t', '--api_token', default=None)
     parser.add_argument('-p', '--project_name', default=None)
     parser.add_argument('-f', '--filepath', default='comment.md')
