@@ -27,12 +27,9 @@ jobs:
         with:
           ref: develop
 
-      - name: Setup Pull Request branch environment and run experiment
+      - name: Setup pull request branch environment and run experiment
         id: experiment_pr
         run: |
-          pip install virtualenv
-          virtualenv pr_env
-          source pr_env/bin/activate
           pip install -r requirements.txt
           python train.py
           experiment_id=$(cat experiment_id.txt)
@@ -44,19 +41,16 @@ jobs:
         with:
           ref: master
 
-      - name: Setup Main branch environment and run experiment
+      - name: Setup main branch environment and run experiment
         id: experiment_main
         run: |
-          pip install virtualenv
-          virtualenv main_env
-          source main_env/bin/activate
           pip install -r requirements.txt
           python train.py
           experiment_id=$(cat experiment_id.txt)
           echo ::set-output name=experiment_id::$experiment_id
           echo ::set-output name=github_ref::$GITHUB_REF
 
-      - name: Get Neptune Experiments
+      - name: Get Neptune experiments
         env:
           MAIN_BRANCH_REF: ${{ steps.experiment_main.outputs.github_ref }}
           MAIN_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_main.outputs.experiment_id }}
@@ -64,6 +58,7 @@ jobs:
           PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr.outputs.experiment_id }}
         id: compare
         run: |
+          pip install -r requirements.txt
           python -m create_github_actions_comment \
             --api_token $NEPTUNE_API_TOKEN \
             --project_name $NEPTUNE_PROJECT_NAME \
