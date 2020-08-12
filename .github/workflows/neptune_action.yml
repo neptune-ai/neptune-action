@@ -32,7 +32,7 @@ jobs:
         id: experiment_pr
         run: |
           pip install -r requirements.txt
-          export NEPTUNE_CUSTOM_EXP_ID=uuidgen
+          export NEPTUNE_CUSTOM_EXP_ID=$(uuidgen)
           python train.py
           echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
 
@@ -45,7 +45,7 @@ jobs:
         id: experiment_main
         run: |
           pip install -r requirements.txt
-          export NEPTUNE_CUSTOM_EXP_ID=uuidgen
+          export NEPTUNE_CUSTOM_EXP_ID=$(uuidgen)
           python train.py
           echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
 
