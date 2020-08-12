@@ -12,8 +12,8 @@ from sklearn.model_selection import train_test_split
 PARAMS = {'boosting_type': 'gbdt',
           'objective': 'multiclass',
           'num_class': 3,
-          'num_leaves': 8,
-          'learning_rate': 0.01,
+          'num_leaves': 18,
+          'learning_rate': 0.015,
           'feature_fraction': 0.9
           }
 NUM_BOOSTING_ROUNDS = 10
