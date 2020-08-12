@@ -13,9 +13,9 @@ The CI workflow works in the following way:
 * create a run comparison markdown table showing diffs and links to Neptune experiments
 * post a comment on the Pull Request with a table and links
 
-![image]()
+![image](https://neptune.ai/wp-content/uploads/pr_comment.gif)
 
-Check out the [Pull Request]() live. 
+Check out the [Pull Request](https://github.com/neptune-ai/neptune-action/pull/31) live. 
 
 # How to use it?
 
@@ -23,6 +23,6 @@ Check out the [Pull Request]() live.
 
 You can simply form this repository, and create a PR from branch develop to master and see how the CI is working.
 
-## Copy the `.github/workflows/neptune_action.yml` to your project
+## Copy the `neptune_action.yml` to your project
 
-You can just copy the [`neptune_action.yml`]() to the `.github/workflows` directory of your own project and adjust it to your needs.
+To set up CI for your project you can just copy the [`neptune_action.yml`](https://github.com/neptune-ai/neptune-action/blob/master/.github/workflows/neptune_action.yml) to the `.github/workflows` directory and adjust it if needed.
