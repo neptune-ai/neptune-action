@@ -1,9 +1,6 @@
 name: Neptune actions
 
 on:
-  push:
-    branches: [master]
-
   pull_request:
     branches: [master]
 
@@ -32,9 +29,9 @@ jobs:
         id: experiment_pr
         run: |
           pip install -r requirements.txt
-          export NEPTUNE_CUSTOM_EXP_ID=$(uuidgen)
+          export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
           python train.py
-          echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
+          echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
 
       - name: Checkout main branch
         uses: actions/checkout@v2
@@ -45,21 +42,21 @@ jobs:
         id: experiment_main
         run: |
           pip install -r requirements.txt
-          export NEPTUNE_CUSTOM_EXP_ID=$(uuidgen)
+          export NEPTUNE_EXPERIMENT_TAG_ID=$(uuidgen)
           python train.py
-          echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
+          echo ::set-output name=experiment_tag_id::$NEPTUNE_EXPERIMENT_TAG_ID
 
       - name: Get Neptune experiments
         env:
-          MAIN_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_main.outputs.experiment_id }}
-          PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr.outputs.experiment_id }}
+          MAIN_BRANCH_EXPERIMENT_TAG_ID: ${{ steps.experiment_main.outputs.experiment_tag_id }}
+          PR_BRANCH_EXPERIMENT_TAG_ID: ${{ steps.experiment_pr.outputs.experiment_tag_id }}
         id: compare
         run: |
           pip install -r requirements.txt
           python -m create_github_actions_comment \
             --api_token $NEPTUNE_API_TOKEN \
             --project_name $NEPTUNE_PROJECT_NAME \
-            --experiment_ids $MAIN_BRANCH_EXPERIMENT_ID $PR_BRANCH_EXPERIMENT_ID \
+            --tag_ids $MAIN_BRANCH_EXPERIMENT_TAG_ID $PR_BRANCH_EXPERIMENT_TAG_ID \
             --filepath comment_body.md
           result=$(cat comment_body.md)
           echo ::set-output name=result::$result
