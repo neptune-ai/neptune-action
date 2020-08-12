@@ -29,9 +29,9 @@ jobs:
         id: experiment_pr
         run: |
           pip install -r requirements.txt
+          export NEPTUNE_CUSTOM_EXP_ID=`date | md5`
           python train.py
-          experiment_id=$(cat experiment_id.txt)
-          echo ::set-output name=experiment_id::$experiment_id
+          echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
 
       - name: Checkout main branch
         uses: actions/checkout@v2
@@ -42,15 +42,13 @@ jobs:
         id: experiment_main
         run: |
           pip install -r requirements.txt
+          export NEPTUNE_CUSTOM_EXP_ID=`date | md5`
           python train.py
-          experiment_id=$(cat experiment_id.txt)
-          echo ::set-output name=experiment_id::$experiment_id
+          echo ::set-output name=experiment_id::$NEPTUNE_CUSTOM_EXP_ID
 
       - name: Get Neptune experiments
         env:
-          MAIN_BRANCH_REF: ${{ steps.experiment_main.outputs.github_ref }}
           MAIN_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_main.outputs.experiment_id }}
-          PR_BRANCH_REF: ${{ steps.experiment_pr.outputs.github_ref }}
           PR_BRANCH_EXPERIMENT_ID: ${{ steps.experiment_pr.outputs.experiment_id }}
         id: compare
         run: |
