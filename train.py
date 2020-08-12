@@ -14,14 +14,16 @@ PARAMS = {'boosting_type': 'gbdt',
           'num_class': 3,
           'num_leaves': 8,
           'learning_rate': 0.01,
-          'feature_fraction': 0.9
+          'feature_fraction': 0.9,
+          'seed': 1234
           }
 NUM_BOOSTING_ROUNDS = 10
 
 data = load_wine()
 X_train, X_test, y_train, y_test = train_test_split(data.data,
                                                     data.target,
-                                                    test_size=0.25)
+                                                    test_size=0.25,
+                                                    random_state=1234)
 lgb_train = lgb.Dataset(X_train, y_train)
 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
