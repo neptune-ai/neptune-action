@@ -1,5 +1,5 @@
 lightgbm==2.3.1
-neptune-client==0.4.125
+neptune-client>=0.9.8
 neptune-contrib==0.24.8
 numpy==1.19.0
 scikit-learn==0.23.1
