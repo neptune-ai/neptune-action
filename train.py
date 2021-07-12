@@ -6,7 +6,7 @@
 import os
 import lightgbm as lgb
 import neptune
-import neptune.new as neptune
+
 from neptunecontrib.monitoring.lightgbm import neptune_monitor
 
 import numpy as np
