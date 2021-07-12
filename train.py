@@ -1,71 +1,168 @@
-import os
+#!/usr/bin/env python
+# coding: utf-8
 
+# In[1]:
+
+import os
 import lightgbm as lgb
-import matplotlib.pyplot as plt
 import neptune
+import neptune.new as neptune
 from neptunecontrib.monitoring.lightgbm import neptune_monitor
-from scikitplot.metrics import plot_roc, plot_confusion_matrix, plot_precision_recall
-from sklearn.datasets import load_wine
-from sklearn.metrics import f1_score, accuracy_score
+
+import numpy as np
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+import pickle
+ 
+import logging
+logging.basicConfig(level=logging.WARN)
+logger = logging.getLogger(__name__)
+
+
+# In[2]:
+neptune.init(api_token=os.getenv('NEPTUNE_API_TOKEN'),
+            project_qualified_name=os.getenv('NEPTUNE_PROJECT_NAME'))
+
+df = pd.read_csv('BostonData.csv',header=0)
+#df.to_csv(r'C:\Users\hhurc\BostonData\BostonData.csv')
+
+
+# ## EDA
+
+# In[3]:
+
+
+df.head(5)
+
+
+# In[4]:
+
+
+df_correl = df.corr()
+
+
+# In[5]:
+
+
+####import seaborn as sns
+####import matplotlib.pyplot as plt
+#plt.figure(figsize=(12,10))
+#sns.heatmap(df_correl,annot=True)
+
+
+# In[6]:
+
+
+#df.info()
+
+
+# In[7]:
+
+
+#sns.pairplot(df)
+
+
+# In[8]:
+
+
+#standardize predictors
+from sklearn.preprocessing import StandardScaler
+
+
+# In[9]:
+
+
+# standardize everything except CHAS and MEDV
+features_stdz = list(set(df.columns) - {"CHAS","MEDV"})
+
+
+# In[10]:
+
+
+std_trans = StandardScaler()
+df_trans = pd.DataFrame(std_trans.fit_transform(df[features_stdz]),columns=features_stdz)
+
+
+# In[11]:
+
+
+df0 = df_trans.merge(df[["CHAS","MEDV"]],right_index=True,left_index=True)
+
+
+# In[12]:
+
+
+df0
+
+
+# In[13]:
+
+
 from sklearn.model_selection import train_test_split
 
-PARAMS = {'boosting_type': 'gbdt',
-          'objective': 'multiclass',
-          'num_class': 3,
-          'num_leaves': 8,
-          'learning_rate': 0.01,
-          'feature_fraction': 0.9,
-          'seed': 1234
-          }
-NUM_BOOSTING_ROUNDS = 10
 
-data = load_wine()
-X_train, X_test, y_train, y_test = train_test_split(data.data,
-                                                    data.target,
-                                                    test_size=0.25,
-                                                    random_state=1234)
+# In[14]:
+
+
+X = df0.iloc[:,0:13]
+y = df0["MEDV"]
+
+
+# In[15]:
+
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
+
 lgb_train = lgb.Dataset(X_train, y_train)
 lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
-# Connect your script to Neptune
 neptune.init(api_token=os.getenv('NEPTUNE_API_TOKEN'),
-             project_qualified_name=os.getenv('NEPTUNE_PROJECT_NAME'))
+            project_qualified_name=os.getenv('NEPTUNE_PROJECT_NAME'))
 
-# Create an experiment and log hyperparameters
-neptune.create_experiment('lightGBM-on-wine',
-                          params={**PARAMS,
-                                  'num_boosting_round': NUM_BOOSTING_ROUNDS})
+neptune.create_experiment('BostonData-NEPTUNE')
 
-gbm = lgb.train(PARAMS,
-                lgb_train,
-                num_boost_round=NUM_BOOSTING_ROUNDS,
-                valid_sets=[lgb_train, lgb_eval],
-                valid_names=['train', 'valid'],
-                callbacks=[neptune_monitor()],  # monitor learning curves
-                )
-y_test_pred = gbm.predict(X_test)
 
-f1 = f1_score(y_test, y_test_pred.argmax(axis=1), average='macro')
-accuracy = accuracy_score(y_test, y_test_pred.argmax(axis=1))
 
-# Log metrics to Neptune
-neptune.log_metric('accuracy', accuracy)
-neptune.log_metric('f1_score', f1)
 
-fig_roc, ax = plt.subplots(figsize=(12, 10))
-plot_roc(y_test, y_test_pred, ax=ax)
+# In[16]:
 
-fig_cm, ax = plt.subplots(figsize=(12, 10))
-plot_confusion_matrix(y_test, y_test_pred.argmax(axis=1), ax=ax)
 
-fig_pr, ax = plt.subplots(figsize=(12, 10))
-plot_precision_recall(y_test, y_test_pred, ax=ax)
+from sklearn.linear_model import LinearRegression
+reg = LinearRegression()
+model = reg.fit(X_train,y_train)
+pickle.dump(model,open('model.pkl','wb'))
 
-# Log performance charts to Neptune
-neptune.log_image('performance charts', fig_roc)
-neptune.log_image('performance charts', fig_cm)
-neptune.log_image('performance charts', fig_pr)
+y_pred = model.predict(X_test)
 
-# Handle CI pipeline details
+from sklearn.metrics import mean_squared_error, r2_score
+import math
+mse = mean_squared_error(y_test, y_pred, squared=False)
+rmse = math.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+neptune.log_metric('mse',mse)
+neptune.log_metric('rmse', rmse)
+neptune.log_metric('r2', r2)
+# In[17]:
+
+
+print("y-intercept",model.coef_[0])
+
+
+# In[18]:
+
+## UNCOMMENT FOR MLFLOW REPORTING
+#mlflow.set_experiment(experiment_name="experiment1")
+#mlflow.set_tracking_uri("http://localhost:5000")
+#with mlflow.start_run():
+#    mlflow.log_param("alpha1",model.coef_[0])
+#    mlflow.log_param("beta1",model.coef_[1])
+
+
+# In[ ]:
+
 if os.getenv('CI') == "true":
     neptune.append_tag('ci-pipeline', os.getenv('NEPTUNE_EXPERIMENT_TAG_ID'))
+
+
