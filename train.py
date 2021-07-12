@@ -114,8 +114,6 @@ y = df0["MEDV"]
 
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
 
-lgb_train = lgb.Dataset(X_train, y_train)
-lgb_eval = lgb.Dataset(X_test, y_test, reference=lgb_train)
 
 neptune.init(api_token=os.getenv('NEPTUNE_API_TOKEN'),
             project_qualified_name=os.getenv('NEPTUNE_PROJECT_NAME'))
